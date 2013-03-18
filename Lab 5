@@ -1,0 +1,165 @@
+Option Strict On
+Option Explicit On
+Module Module1
+  
+    Sub Main()
+        Console.SetWindowSize(150, 50)
+
+        Dim sales(,) As Double = _
+            {{25000, 35000, 15000, 40000, 0, 0}, _
+             {22000, 38000, 20000, 30000, 0, 0}, _
+             {18000, 20000, 20000, 39000, 0, 0}, _
+             {30000, 20000, 12000, 30000, 0, 0}, _
+             {20000, 30000, 25000, 35000, 0, 0}, _
+             {0, 0, 0, 0, 0, Nothing}}
+
+        '       Trimestre 1, 2, 3, 4
+        'SanJuan
+        'Ponce
+        'Mayaguez
+        'Arecibo
+        'Fajardo
+
+        Dim citynames() As String = {"San Juan", "Ponce   ", "Mayaguez", "Arecibo", "Fajardo"}
+        Dim cityname_MaxAnnualSales As String = ""
+        Dim cityname_MaxTrimesterSales(4) As String
+        Dim city_MaxAnnualSales As Integer = 0
+        Dim city_MaxTrimesterSales(3) As Integer
+
+
+
+
+
+        'Populating the 4th index of each city, 4th index = total annual sales
+        For city As Short = 0 To 4
+            For column As Short = 0 To 3
+                sales(city, 4) += sales(city, column)
+            Next
+        Next
+
+        'Populating the 5th index of each city, 5th index = average sales per trimester 
+        For city As Short = 0 To 4
+            For column As Integer = 4 To 5
+                sales(city, 5) = Math.Round(sales(city, 4) / 4, 2)
+                Exit For
+            Next
+        Next
+
+        'Populating the 5th row, totals per trimester & and annual total
+        For column As Integer = 0 To 4
+            For rows As Integer = 0 To 4
+                sales(5, column) += sales(rows, column)
+            Next
+        Next
+
+        'Tienda con mayor cantidad de ventas en cada trimestre
+        For column As Integer = 0 To 3
+            For row As Integer = 0 To 4
+                If sales(row, column) > city_MaxTrimesterSales(column) Then
+                    city_MaxTrimesterSales(column) = CInt(sales(row, column))
+                    cityname_MaxTrimesterSales(column) = citynames(row)
+
+                End If
+            Next
+        Next
+
+        'Printing Data
+        Console.WriteLine("City" & Space(12) & "1st Trimester" & Space(8) & "2nd Trimester" & Space(6) & "3rd Trimester" & Space(6) & "4th Trimester" & Space(6) & "Annual Total" & Space(8) & "Avg by Trimester")
+        Console.WriteLine()
+        For row As Integer = 0 To 4
+            If row >= 3 Then
+                Console.Write(citynames(row) & Space(9))
+            Else
+                Console.Write(citynames(row) & Space(8))
+            End If
+            For column As Integer = 0 To 5
+                If column = 0 Then
+                    Console.Write(FormatCurrency(sales(row, column)) & Space(11))
+                End If
+                If column = 1 Then
+                    Console.Write(FormatCurrency(sales(row, column)) & Space(8))
+                End If
+                If column = 2 Then
+                    Console.Write(Space(1) & FormatCurrency(sales(row, column)) & Space(9))
+                End If
+                If column = 3 Then
+                    Console.Write(FormatCurrency(sales(row, column)) & Space(4))
+                End If
+                If column = 5 Then
+                    If row = 0 Or row = 1 Or row = 4 Then
+                        Console.Write(Space(9) & FormatCurrency(sales(row, column)))
+                    End If
+                    If row = 2 Or row = 3 Then
+                        Console.Write(Space(10) & FormatCurrency(sales(row, column)))
+                    End If
+                End If
+                If column = 4 Then
+                    If row <= 1 Then
+                        Console.Write(Space(5) & FormatCurrency(sales(row, column)))
+                    End If
+                    If row = 2 Then
+                        Console.Write(Space(5) & FormatCurrency(sales(row, column)))
+                    End If
+                    If row = 3 Then
+                        Console.Write(Space(5) & FormatCurrency(sales(row, column)))
+                    End If
+                    If row = 4 Then
+                        Console.Write(Space(5) & FormatCurrency(sales(row, column)))
+                    End If
+                End If
+
+            Next
+
+            Console.WriteLine()
+        Next
+
+        Console.WriteLine()
+        For row As Integer = 5 To 6
+            Console.Write("Totales")
+            For column = 0 To 4
+                If column = 0 Then
+                    Console.Write(Space(9) & FormatCurrency(sales(row, column)))
+                End If
+                If column = 1 Then
+                    Console.Write(Space(10) & FormatCurrency(sales(row, column)))
+                Else
+                    If column = 2 Then
+                        Console.Write(Space(8) & FormatCurrency(sales(row, column)))
+                    Else
+                        If column = 3 Then
+                            Console.Write(Space(9) & FormatCurrency(sales(row, column)))
+                        Else
+                            If column = 4 Then
+                                Console.Write(Space(8) & FormatCurrency(sales(row, column)))
+                            End If
+                        End If
+                    End If
+                End If
+            Next
+            Exit For
+        Next
+
+        Console.WriteLine()
+        Console.WriteLine()
+
+        For i = 0 To 3
+            Console.WriteLine("La tienda con mayor cantidad de ventas en el Trimestre #" & (i + 1) & " fue:")
+            Console.WriteLine(cityname_MaxTrimesterSales(i) & " con un total de " & FormatCurrency(city_MaxTrimesterSales(i)) & ".")
+            Console.WriteLine()
+        Next
+
+        'Tienda con mayor cantidad de ventas en el año
+        For i As Integer = 0 To 4
+            If sales(i, 4) > city_MaxAnnualSales Then
+                city_MaxAnnualSales = CInt(sales(i, 4))
+                cityname_MaxAnnualSales = citynames(i)
+            End If
+        Next
+
+
+        Console.WriteLine("La tienda con mayor cantidad de ventas en el año fue:")
+        Console.Write(cityname_MaxAnnualSales & " con un total de " & FormatCurrency(city_MaxAnnualSales) & ".")
+
+        Console.ReadLine()
+    End Sub
+End Module
